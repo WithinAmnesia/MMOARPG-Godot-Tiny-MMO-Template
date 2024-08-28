@@ -8,7 +8,7 @@ Old screenshot showing 16 clients at the same time on multiple different instanc
 Login menu:  
 ![login-menu-screenshot](https://github.com/user-attachments/assets/3d47c8e1-ace1-4452-83b5-a4d73584fdc4)
 
-## Project Goals / To-Do List
+## Project Goals
 
 The list below indicates the current progress and goals:
 
@@ -26,7 +26,8 @@ The list below indicates the current progress and goals:
 - [ ] **Entity interpolation (rubber banding).**
 - [ ] **Server clock.**
 - [ ] **Instance based chat.**
- 
+- [ ] **Saving persistent data on the server.**
+
 And maybe more later.
 
 See the [open issues](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) for a full list of proposed features (and known issues).  
