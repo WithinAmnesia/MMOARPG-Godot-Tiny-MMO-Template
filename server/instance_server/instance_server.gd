@@ -1,12 +1,15 @@
 class_name ServerInstance
 extends SubViewport
 
-signal player_entered_warper(peer_id: int, current_instance: ServerInstance, target_instance: StringName)
+signal player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper)
 
 const PLAYER = preload("res://common/entities/player/base_player/player.tscn")
 
-var entity_collection: Dictionary = {}
+var entity_collection: Dictionary = {}#[int, Entity]
+## Current connected peers to the instance.
 var connected_peers: PackedInt64Array = []
+## Peers coming from another instance.
+var awaiting_peers: Dictionary = {}#[int, Player]
 
 var map: Map
 var instance_resource: InstanceResource
@@ -42,13 +45,11 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		return
 	if interaction_area is Warper:
 		interaction_area = interaction_area as Warper
-		player_entered_warper.emit(player.name.to_int(), self, interaction_area.target_instance_name)
+		player_entered_warper.emit.call_deferred(player, self, interaction_area as Warper)
 	if interaction_area is Teleporter:
 		if not player.just_teleported:
 			player.just_teleported = true
 			update_entity(player, {"position": interaction_area.target.global_position})
-			await get_tree().create_timer(0.6).timeout
-			player.just_teleported = false
 
 @rpc("authority", "call_remote", "reliable", 1)
 func update_entity(entity, to_update: Dictionary) -> void:
@@ -70,36 +71,49 @@ func fetch_player_state(sync_state: Dictionary) -> void:
 			entity.sync_state = sync_state
 
 @rpc("authority", "call_remote", "reliable", 0)
-func spawn_player(player_id: int, spawn_state: Dictionary = {}) -> void:
+func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
+	var player: Player
+	var spawn_index: int = 0
+	if awaiting_peers.has(peer_id):
+		player = awaiting_peers[peer_id]["player"]
+		spawn_index = awaiting_peers[peer_id]["target_id"]
+		awaiting_peers.erase(peer_id)
+	else:
+		player = instantiate_player(peer_id)
+	player.spawn_state["position"] = map.get_spawn_position(spawn_index)
+	player.just_teleported = true
+	add_child(player, true)
+	entity_collection[peer_id] = player
+	connected_peers.append(peer_id)
+	propagate_spawn(peer_id, player.spawn_state)
+
+func instantiate_player(peer_id: int) -> Player:
 	var new_player: Player = PLAYER.instantiate() as Player
-	var spawn_position := map.get_spawn_position()
-	spawn_state = {
-		"position": spawn_position,
-		"sprite_frames": Server.player_list[player_id]["class"]
-	}
-	new_player.name = str(player_id)
-	new_player.spawn_state = spawn_state
-	new_player.just_teleported = true
-	add_child(new_player, true)
-	entity_collection[player_id] = new_player
-	connected_peers.append(player_id)
-	# Spawn the new player on all other client in the current instance
-	# and spawn all other players on the new client.
+	new_player.name = str(peer_id)
+	new_player.spawn_state = {"sprite_frames": Server.player_list[peer_id]["class"]}
+	return new_player
+
+## Spawn the new player on all other client in the current instance
+## and spawn all other players on the new client.
+func propagate_spawn(player_id: int, spawn_state: Dictionary) -> void:
 	for peer_id: int in connected_peers:
-		spawn_player.rpc_id(peer_id, player_id, new_player.spawn_state)
+		spawn_player.rpc_id(peer_id, player_id, spawn_state)
 		if player_id != peer_id:
 			spawn_player.rpc_id(player_id, peer_id, entity_collection[peer_id].spawn_state)
-	await get_tree().create_timer(0.6).timeout
-	new_player.just_teleported = false
 
 @rpc("authority", "call_remote", "reliable", 0)
-func despawn_player(player_id: int) -> void:
-	connected_peers.remove_at(connected_peers.find(player_id))
-	if entity_collection.has(player_id):
-		(entity_collection[player_id] as Entity).queue_free()
-		entity_collection.erase(player_id)
-	for peer_id: int in connected_peers:
-		despawn_player.rpc_id(peer_id, player_id)
+func despawn_player(peer_id: int, delete: bool = false) -> void:
+	connected_peers.remove_at(connected_peers.find(peer_id))
+	if entity_collection.has(peer_id):
+		var player: Entity = entity_collection[peer_id] as Entity
+		if delete:
+			player.queue_free()
+		else:
+			remove_child(player)
+			
+		entity_collection.erase(peer_id)
+	for id: int in connected_peers:
+		despawn_player.rpc_id(id, peer_id)
 
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:

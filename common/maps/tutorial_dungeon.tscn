@@ -65,4 +65,5 @@ target = NodePath("../Teleporter4")
 
 [node name="Warper" parent="." instance=ExtResource("4_g1jod")]
 position = Vector2(591, 367)
-target_instance_name = &"MainInstance"
+target_instance_name = &"AnotherInstance"
+target_id = 1

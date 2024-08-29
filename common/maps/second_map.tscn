@@ -32,3 +32,4 @@ warper_id = 1
 [node name="Warper2" parent="." instance=ExtResource("6_0mhht")]
 position = Vector2(3, 65)
 target_instance_name = &"MainInstance"
+target_id = 1

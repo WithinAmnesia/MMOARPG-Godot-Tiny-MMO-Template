@@ -4,3 +4,4 @@ extends InteractionArea
 
 @export var target_instance_name: StringName
 @export var warper_id: int = 0
+@export var target_id: int = 0

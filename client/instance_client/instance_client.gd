@@ -10,6 +10,8 @@ var entity_collection: Dictionary = {}
 
 var last_state: Dictionary = {"T" = 0.0}
 
+var local_player: LocalPlayer
+
 @rpc("authority", "call_remote", "unreliable", 0)
 func fetch_instance_state(new_state: Dictionary):
 	if new_state["T"] > last_state["T"]:
@@ -29,7 +31,7 @@ func update_entity(entity_id, to_update: Dictionary) -> void:
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	var new_player: Player
-	if player_id == Client.peer_id:
+	if player_id == Client.peer_id and not local_player:
 		new_player = LOCAL_PLAYER.instantiate()
 		(new_player as LocalPlayer).sync_state_defined.connect(
 			func(sync_state: Dictionary):

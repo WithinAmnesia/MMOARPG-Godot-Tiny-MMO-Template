@@ -7,3 +7,4 @@
 script = ExtResource("1_7giwh")
 instance_name = &"AnotherInstance"
 map = ExtResource("1_hb21q")
+load_at_startup = false

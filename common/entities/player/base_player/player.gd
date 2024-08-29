@@ -18,7 +18,16 @@ var sprite_frames: String = "knight":
 	set = _set_sprite_frames
 
 var is_in_pvp_zone: bool = false
-var just_teleported: bool = false
+var just_teleported: bool = false:
+	set(value):
+		just_teleported = value
+		if not is_node_ready():
+			await ready
+		if not is_inside_tree():
+			await tree_entered
+		if just_teleported:
+			await get_tree().create_timer(0.5).timeout
+			just_teleported = false
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 

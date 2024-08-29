@@ -1,15 +1,17 @@
+class_name InstanceManagerServer
 extends Node
 
+
+var online_instances: Dictionary#[
 var instance_collection: Array[InstanceResource]
-var main_instance: InstanceResource
+var main_instance: ServerInstance
 
 func _ready() -> void:
 	build_instance_collection()
-	main_instance = (get_node("MainInstance") as ServerInstance).instance_resource
 	multiplayer.peer_connected.connect(func(peer_id: int):
 		charge_new_instance.rpc_id(peer_id, {
-			"instance_name": main_instance.instance_name,
-			"map_path": main_instance.map.resource_path
+			"instance_name": main_instance.name,
+			"map_path": main_instance.instance_resource.map.resource_path
 			}
 		)
 	)
@@ -20,29 +22,48 @@ func _ready() -> void:
 func charge_new_instance(_new_instance: Dictionary) -> void:
 	pass
 
-func _on_player_entered_warper(peer_id: int, current_instance: ServerInstance, target_instance_name: StringName) -> void:
-	var target_instance: InstanceResource = get_instance_resource_from_name(target_instance_name)
-	if not target_instance:
+func _on_player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper) -> void:
+	var peer_id: int = player.name.to_int()
+	var instance_resource: InstanceResource = get_instance_resource_from_name(warper.target_instance_name)
+	if not instance_resource:
 		return
+	var target_instance: ServerInstance
+	if instance_resource.charged_instances.is_empty():
+		await charge_instance(instance_resource)
+	target_instance = instance_resource.charged_instances[0]
 	if current_instance.connected_peers.has(peer_id):
-		current_instance.despawn_player(peer_id)
+		current_instance.despawn_player(peer_id, false)
 	charge_new_instance.rpc_id(peer_id, {
-		"instance_name": target_instance.instance_name,
-		"map_path": target_instance.map.resource_path
+		"instance_name": target_instance.name,
+		"map_path": instance_resource.map.resource_path
 		}
 	)
+	target_instance.awaiting_peers[peer_id] = {
+		"player": player,
+		"target_id": warper.target_id
+	}
 
 func build_instance_collection() -> void:
 	for file_path in get_all_file_paths("res://common/resources/custom/instance_resources/instance_collection/"):
 		instance_collection.append(ResourceLoader.load(file_path))
 	for instance_resource: InstanceResource in instance_collection:
-		var new_instance: ServerInstance = preload("res://server/instance_server/instance_server.tscn").instantiate()
-		new_instance.name = instance_resource.instance_name
-		new_instance.instance_resource = instance_resource
-		add_child(new_instance)
-		new_instance.player_entered_warper.connect(self._on_player_entered_warper)
-		new_instance.load_map(instance_resource.map)
+		if instance_resource.load_at_startup:
+			charge_instance(instance_resource)
 
+func charge_instance(instance_resource: InstanceResource) -> void:
+	var new_instance := ServerInstance.new()
+	new_instance.name = str(new_instance.get_instance_id())
+	new_instance.instance_resource = instance_resource
+	add_child(new_instance, true)
+	new_instance.player_entered_warper.connect(self._on_player_entered_warper)
+	new_instance.load_map(instance_resource.map)
+	instance_resource.charged_instances.append(new_instance)
+	# Needs rework.
+	if instance_resource.instance_name == "MainInstance":
+		main_instance = new_instance
+	if not new_instance.is_node_ready():
+		await new_instance.ready
+	
 func get_instance_resource_from_name(instance_name) -> InstanceResource:
 	for instance_resource in instance_collection:
 		if instance_resource.instance_name == instance_name:

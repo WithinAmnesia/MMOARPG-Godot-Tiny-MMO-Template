@@ -60,42 +60,10 @@ warper_id = 1
 position = Vector2(315, 208)
 scale = Vector2(2.37041, 0.841242)
 
-[node name="Teleporter" parent="." node_paths=PackedStringArray("target") instance=ExtResource("7_mnpu2")]
+[node name="TestTP" parent="." node_paths=PackedStringArray("target") instance=ExtResource("7_mnpu2")]
 position = Vector2(276, 54)
-target = NodePath("../Teleporter2")
+target = NodePath("../TestTP2")
 
-[node name="Teleporter2" parent="." node_paths=PackedStringArray("target") instance=ExtResource("7_mnpu2")]
+[node name="TestTP2" parent="." node_paths=PackedStringArray("target") instance=ExtResource("7_mnpu2")]
 position = Vector2(346, 53)
-target = NodePath("../Teleporter")
-
-[connection signal="body_entered" from="Props/Coin" to="Props/Coin" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51240" to="Props/@Area2D@51240" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51241" to="Props/@Area2D@51241" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51242" to="Props/@Area2D@51242" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51243" to="Props/@Area2D@51243" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51246" to="Props/@Area2D@51246" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51247" to="Props/@Area2D@51247" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51248" to="Props/@Area2D@51248" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51249" to="Props/@Area2D@51249" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51250" to="Props/@Area2D@51250" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51251" to="Props/@Area2D@51251" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51252" to="Props/@Area2D@51252" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51253" to="Props/@Area2D@51253" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51254" to="Props/@Area2D@51254" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51255" to="Props/@Area2D@51255" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51256" to="Props/@Area2D@51256" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51257" to="Props/@Area2D@51257" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51258" to="Props/@Area2D@51258" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51259" to="Props/@Area2D@51259" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51260" to="Props/@Area2D@51260" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51261" to="Props/@Area2D@51261" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51262" to="Props/@Area2D@51262" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51263" to="Props/@Area2D@51263" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51264" to="Props/@Area2D@51264" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51265" to="Props/@Area2D@51265" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51266" to="Props/@Area2D@51266" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51267" to="Props/@Area2D@51267" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51268" to="Props/@Area2D@51268" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51269" to="Props/@Area2D@51269" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@51270" to="Props/@Area2D@51270" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/GroundButton" to="Props/GroundButton" method="_on_body_entered"]
+target = NodePath("../TestTP")
