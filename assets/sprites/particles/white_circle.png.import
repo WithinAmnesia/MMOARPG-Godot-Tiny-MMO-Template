@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clh1sced2xnyq"
-path="res://.godot/imported/Wizard_Idle.png-dd2fd98fc76bae5d388ad27618e21e0c.ctex"
+uid="uid://bg355a0er6or"
+path="res://.godot/imported/white_circle.png-beff4b89774106bc0dbbccebc14e283d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/characters/Wizard/Wizard_Idle.png"
-dest_files=["res://.godot/imported/Wizard_Idle.png-dd2fd98fc76bae5d388ad27618e21e0c.ctex"]
+source_file="res://assets/sprites/particles/white_circle.png"
+dest_files=["res://.godot/imported/white_circle.png-beff4b89774106bc0dbbccebc14e283d.ctex"]
 
 [params]
 
