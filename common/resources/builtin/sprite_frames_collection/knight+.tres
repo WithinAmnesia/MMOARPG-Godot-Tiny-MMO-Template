@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=13 format=3 uid="uid://bqcsne8jhbmi8"]
+[gd_resource type="SpriteFrames" load_steps=13 format=3 uid="uid://de2gq1syantcm"]
 
 [ext_resource type="Texture2D" uid="uid://bxxwhsxx83edx" path="res://assets/sprites/characters/knight/Knight_Idle.png" id="1_6wx27"]
 [ext_resource type="Texture2D" uid="uid://bifpd6r4mwnv3" path="res://assets/sprites/characters/knight/Knight_Run.png" id="2_6lfon"]
